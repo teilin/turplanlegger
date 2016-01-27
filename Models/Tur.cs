@@ -8,5 +8,6 @@ namespace turplanlegger.Models
         public string Lisens { get; set; }
         public string Status { get; set; }
         public GeoJson GeoJson { get; set; }
+        public IList<string> Tags { get; set; }
     }
 }
