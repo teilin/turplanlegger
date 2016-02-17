@@ -8,6 +8,6 @@ namespace turplanlegger.Services
 {
     public interface ITurbasenService
     {
-        Task<IList<Tur>> GetTurer();
+        Task<TurList> GetTurer();
     }
 }

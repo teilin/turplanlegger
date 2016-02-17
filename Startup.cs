@@ -17,10 +17,15 @@ namespace turplanlegger
 {
     public class Startup
     {
+        private readonly IHostingEnvironment _env;
+        
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
+            _env = env;
+            
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
+                .SetBasePath(appEnv.ApplicationBasePath)
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
@@ -41,6 +46,8 @@ namespace turplanlegger
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            
             // Add framework services.
             services.AddEntityFramework()
                 .AddSqlite()
@@ -52,11 +59,8 @@ namespace turplanlegger
                 .AddDefaultTokenProviders();
 
             services.AddMvc();
-
-            // Add application services.
-            services.AddTransient<IEmailSender, AuthMessageSender>();
-            services.AddTransient<ISmsSender, AuthMessageSender>();
-            //services.AddTransient<ITurbasenService, TurbasenService>();
+            
+            services.AddScoped<ITurbasenService, TurbasenService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -92,8 +96,6 @@ namespace turplanlegger
             app.UseStaticFiles();
 
             app.UseIdentity();
-
-            // To configure external authentication please see http://go.microsoft.com/fwlink/?LinkID=532715
 
             app.UseMvc(routes =>
             {
